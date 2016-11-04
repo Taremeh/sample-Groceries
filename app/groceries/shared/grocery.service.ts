@@ -1,13 +1,13 @@
 import {Injectable} from "@angular/core";
-import {Config} from "../config";
-import {Grocery} from "./grocery";
+import { BackendService } from "../../shared/backend.service";
+import {Grocery} from "./grocery.model";
 import {Observable} from "rxjs/Rx";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 var firebase = require("nativescript-plugin-firebase");
 declare var zonedCallback: Function;
 
 @Injectable()
-export class GroceryStore {
+export class GroceryService {
   
   private onSync:Function;
   items: BehaviorSubject<Array<Grocery>> = new BehaviorSubject([]);
@@ -29,7 +29,7 @@ export class GroceryStore {
         this._allItems = [];
         Object.keys(result).forEach((key) => {
           let entry = result[key];
-          if(Config.token === entry.UID){
+          if(BackendService.token === entry.UID){
             this._allItems.push(
               new Grocery(
                 key,
@@ -50,7 +50,7 @@ export class GroceryStore {
   add(name: string) {   
     return firebase.push(
         "/Groceries",
-        { "Name": name, "UID": Config.token, "Date": 0 - Date.now() }
+        { "Name": name, "UID": BackendService.token, "Date": 0 - Date.now() }
       )
       .catch(this.handleErrors);
   }

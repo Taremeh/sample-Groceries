@@ -5,5 +5,5 @@ export class Grocery {
     public date: string,
     public done: boolean,
     public deleted: boolean
-  ) {}
+    ) {}
 }

@@ -1,10 +1,12 @@
-import {User} from "../../../shared/user/user";
+import "reflect-metadata";
+import { User } from "../../../shared";
 
 declare var describe: any;
 declare var expect: any;
 declare var it: any;
 
-describe("Email validation", function() {
+//firebase takes care of email validation
+/*describe("Email validation", function() {
   let user = new User();
 
   it("Should reject an empty email address", function () {
@@ -28,3 +30,4 @@ describe("Email validation", function() {
     expect(user.isValidEmail()).toBe(true);
   });
 });
+*/

@@ -1,9 +1,6 @@
-import {nativeScriptBootstrap} from "nativescript-angular/application";
-import {APP_ROUTER_PROVIDERS} from "./app.routes";
-import {AppComponent} from "./app.component";
-import {setStatusBarColors} from "./utils/status-bar-util";
-
-var firebase = require("nativescript-plugin-firebase");
+import { platformNativeScriptDynamic, NativeScriptModule } from "nativescript-angular/platform";
+import { AppModule } from "./app.module";
+import firebase = require("nativescript-plugin-firebase");
 
 firebase.init({
    persist: true
@@ -15,7 +12,5 @@ firebase.init({
                 console.log("firebase.init error: " + error);
               }
           );
-setStatusBarColors();
-nativeScriptBootstrap(AppComponent, [
-  APP_ROUTER_PROVIDERS
-]);
+
+platformNativeScriptDynamic().bootstrapModule(AppModule);

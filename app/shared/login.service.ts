@@ -1,10 +1,10 @@
 import {Injectable} from "@angular/core";
-import {User} from "./user";
-import {Config} from "../config";
-var firebase = require("nativescript-plugin-firebase");
+import {User} from "./user.model";
+import { BackendService } from "./backend.service";
+import firebase = require("nativescript-plugin-firebase");
 
 @Injectable()
-export class UserService {
+export class LoginService {
   register(user: User) {
     return firebase.createUser({
       email: user.email,
@@ -26,7 +26,7 @@ export class UserService {
       password: user.password
     }).then(
         function (result) {
-          Config.token = result.uid
+          BackendService.token = result.uid
           return JSON.stringify(result);
         },
         function (errorMessage) {

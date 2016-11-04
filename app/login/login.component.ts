@@ -1,24 +1,21 @@
-import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
-import {Router} from "@angular/router";
-import {Color} from "color";
-import {connectionType, getConnectionType} from "connectivity";
-import {Animation} from "ui/animation";
-import {View} from "ui/core/view";
-import {prompt} from "ui/dialogs";
-import {Page} from "ui/page";
-import {TextField} from "ui/text-field";
-import {User} from "../../shared/user/user";
-import {UserService} from "../../shared/user/user.service";
-import {setHintColor} from "../../utils/hint-util";
-import {alert} from "../../utils/dialog-util";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { Router } from "@angular/router";
+import { Color } from "color";
+import { connectionType, getConnectionType } from "connectivity";
+import { Animation } from "ui/animation";
+import { View } from "ui/core/view";
+import { prompt } from "ui/dialogs";
+import { Page } from "ui/page";
+import { TextField } from "ui/text-field";
+
+import { alert, setHintColor, LoginService, User } from "../shared";
 
 @Component({
-  selector: "my-app",
-  providers: [UserService],
-  templateUrl: "pages/login/login.html",
-  styleUrls: ["pages/login/login-common.css", "pages/login/login.css"],
+  selector: "gr-login",
+  templateUrl: "login/login.component.html",
+  styleUrls: ["login/login-common.css", "login/login.component.css"],
 })
-export class LoginPageComponent implements OnInit {
+export class LoginComponent implements OnInit {
   user: User;
   isLoggingIn = true;
   isAuthenticating = false;
@@ -32,7 +29,7 @@ export class LoginPageComponent implements OnInit {
   @ViewChild("password") password: ElementRef;
 
   constructor(private _router: Router,
-    private _userService: UserService,
+    private userService: LoginService,
     private page: Page) {
     this.user = new User();
     this.user.email = "ngconf@telerik33.com";
@@ -48,11 +45,6 @@ export class LoginPageComponent implements OnInit {
   }
 
   submit() {
-    if (!this.user.isValidEmail()) {
-      alert("Enter a valid email address.");
-      return;
-    }
-
     this.isAuthenticating = true;
     if (this.isLoggingIn) {
       this.login();
@@ -67,7 +59,7 @@ export class LoginPageComponent implements OnInit {
       return;
     }
 
-    this._userService.login(this.user)
+    this.userService.login(this.user)
       .then(() => {
         this.isAuthenticating = false;
         this._router.navigate(["/"]);
@@ -84,7 +76,7 @@ export class LoginPageComponent implements OnInit {
       return;
     }
 
-    this._userService.register(this.user)
+    this.userService.register(this.user)
       .then(() => {
         alert("Your account was successfully created.");
         this.isAuthenticating = false;
@@ -109,7 +101,7 @@ export class LoginPageComponent implements OnInit {
       cancelButtonText: "Cancel"
     }).then((data) => {
       if (data.result) {
-        this._userService.resetPassword(data.text.trim())
+        this.userService.resetPassword(data.text.trim())
           .then(() => {
             alert("Your password was successfully reset. Please check your email for instructions on choosing a new password.");
           })

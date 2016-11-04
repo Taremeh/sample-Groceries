@@ -1,42 +1,41 @@
-import {Component, ElementRef, OnInit, Pipe, PipeTransform, ViewChild} from "@angular/core";
-import {Router} from "@angular/router";
-import {Color} from "color";
-import {action} from "ui/dialogs";
-import {Page} from "ui/page";
-import {TextField} from "ui/text-field";
-import {Config} from "../../shared/config";
-import {Grocery} from "../../shared/grocery/grocery";
-import {GroceryList} from "../list/grocery-list.component";
-import {GroceryStore} from "../../shared/grocery/grocery-list.service";
-import {alert} from "../../utils/dialog-util";
-import {setHintColor} from "../../utils/hint-util";
-var socialShare = require("nativescript-social-share");
-var firebase = require("nativescript-plugin-firebase");
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { Router } from "@angular/router";
+import { action } from "ui/dialogs";
+import { Color } from "color";
+import { Page } from "ui/page";
+import { TextField } from "ui/text-field";
+import { BackendService } from "../shared";
+import * as SocialShare from "nativescript-social-share";
+import firebase = require("nativescript-plugin-firebase");
+
+import { GroceryListComponent } from "./grocery-list/grocery-list.component";
+import { GroceryService } from "./shared";
+import { Grocery } from "./shared/grocery.model";
+import { LoginService, alert, setHintColor } from "../shared";
 
 @Component({
-  selector: "list",
-  directives: [GroceryList],
-  templateUrl: "pages/list/list.html",
-  styleUrls: ["pages/list/list-common.css", "pages/list/list.css"],
-  providers: [GroceryStore]
+  selector: "gr-groceries",
+  templateUrl: "groceries/groceries.component.html",
+  styleUrls: ["groceries/groceries-common.css", "groceries/groceries.component.css"],
+  providers: [GroceryService]
 })
-export class ListPageComponent implements OnInit {
+export class GroceriesComponent implements OnInit {
   grocery: string = "";
   isAndroid;
   isShowingRecent = false;
   isLoading = false;
-  
+
   @ViewChild("groceryTextField") groceryTextField: ElementRef;
 
-  constructor(private _router: Router,
-    private store: GroceryStore,
+  constructor(private router: Router,
+    private store: GroceryService,
+    private loginService: LoginService,
     private page: Page) {}
 
   ngOnInit() {
     this.isAndroid = !!this.page.android;
     this.page.actionBarHidden = true;
     this.page.className = "list-page";
-    Config.setupConnectionMonitoring();
   }
 
   setTextFieldHintColor(textField) {
@@ -61,8 +60,7 @@ export class ListPageComponent implements OnInit {
   }
 
   showActivityIndicator() {
-    // TODO: Implement loading indicators
-    // this.isLoading = true;
+    this.isLoading = true;
   }
   hideActivityIndicator() {
     this.isLoading = false;
@@ -143,12 +141,13 @@ export class ListPageComponent implements OnInit {
     for (let i = 0, size = items.length; i < size ; i++) {
       list.push(items[i].name);
     }
-    socialShare.shareText(list.join(", ").trim());
+    SocialShare.shareText(list.join(", ").trim());
   }
 
   logoff() {
-    Config.invalidateToken();
+    BackendService.token = "";
     firebase.logout();
-    this._router.navigate(["/login"]);
+    this.router.navigate(["/login"]);
   }
 }
+

@@ -1,8 +1,8 @@
 <ListView
   [row]="row"
   [class.visible]="listLoaded"
-  [items]="(store.items | async) | itemStatus:showDeleted"
-  (itemLoading)="makeBackgroundTransparent($event)">
+  [items]="store.items | async | itemStatus:showDeleted"
+  (itemLoading)="makeBackgroundTransparent($event)" (loaded)="load()">
   <template let-item="item">
     <GridLayout
       columns="*, auto"
